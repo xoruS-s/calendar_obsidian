@@ -441,28 +441,13 @@ class CalendarView extends obsidian.ItemView {
                 const notes = content.split("\n").filter(line => line.trim() !== "");
 
                 // Отображаем каждую заметку
-                notes.forEach((note, index) => {
+                notes.forEach((note) => {
                     const noteEl = eventsContainer.createEl("div", { cls: "today-event" });
 
                     // Текст заметки
                     noteEl.createEl("div", {
                         text: note,
                         cls: "today-event-text"
-                    });
-
-                    // Кнопка для удаления заметки
-                    const deleteButton = noteEl.createEl("button", {
-                        text: "Удалить",
-                        cls: "today-event-button"
-                    });
-                    deleteButton.addEventListener("click", async () => {
-                        const updatedNotes = notes.filter((_, i) => i !== index);
-                        if (updatedNotes.length > 0) {
-                            await this.app.vault.modify(file, updatedNotes.join("\n"));
-                        } else {
-                            await this.app.vault.delete(file);
-                        }
-                        this.renderTodayEvents(container); // Обновляем список событий
                     });
                 });
             });
