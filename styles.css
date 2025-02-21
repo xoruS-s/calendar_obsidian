@@ -1,0 +1,118 @@
+.calendar {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    position: relative;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 колонок для дней недели */
+    gap: 10px;
+    margin-top: 20px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    width: 100%; /* Убедимся, что сетка занимает всю ширину */
+}
+.calendar-day-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.calendar-day {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+}
+.calendar-day.empty {
+    background-color: #f9f9f9;
+    border: none;
+    cursor: default;
+}
+.calendar-day:hover {
+    background-color: #e0e0e0;
+}
+.calendar-day.today {
+    background-color: #d1e8ff;
+    border-color: #a3c7e8;
+}
+
+/* Навигационная панель */
+.calendar-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    justify-content: space-between;
+}
+.nav-button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.nav-button:hover {
+    background: #f0f0f0;
+}
+
+.current-date {
+    font-size: 1.4em;
+    font-weight: bold;
+    min-width: 250px;
+    text-align: center;
+}
+.year-controls {
+    display: flex;
+    gap: 5px;
+    margin-left: auto;
+}
+
+.note-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.note-text {
+    flex-grow: 1;
+    margin-right: 10px;
+    font-size: 14px;
+}
+.note-button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.note-button:hover {
+    background-color: #f0f0f0;
+}
+.note-empty {
+    text-align: center;
+    color: #888;
+    margin-bottom: 10px;
+}
