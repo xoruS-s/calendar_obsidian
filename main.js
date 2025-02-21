@@ -150,6 +150,7 @@ class CalendarView extends obsidian.ItemView {
         container.empty();
         this.renderHeader(container);
         this.renderCalendar(container);
+        this.renderTodayEvents(container); // Добавляем список событий на сегодня
     }
 
     renderHeader(container) {
@@ -209,6 +210,16 @@ class CalendarView extends obsidian.ItemView {
     }
 
     changeMonth(offset) {
+        // const prevDate = new Date(this.currentDate);
+        // this.currentDate.setMonth(this.currentDate.getMonth() + offset);
+        //
+        // // Автоматическое изменение года при переходе через декабрь/январь
+        // if (this.currentDate.getMonth() !== (prevDate.getMonth() + offset + 12) % 12) {
+        //     this.currentDate.setFullYear(this.currentDate.getFullYear() + (offset > 0 ? 1 : -1));
+        // }
+        //
+        // this.updateCalendar();
+
         const prevDate = new Date(this.currentDate);
         this.currentDate.setMonth(this.currentDate.getMonth() + offset);
 
@@ -217,7 +228,49 @@ class CalendarView extends obsidian.ItemView {
             this.currentDate.setFullYear(this.currentDate.getFullYear() + (offset > 0 ? 1 : -1));
         }
 
-        this.updateCalendar();
+        this.animateCalendarTransition(offset);
+    }
+
+    animateCalendarTransition(offset) {
+        const container = this.containerEl.children[1];
+        const oldCalendar = container.querySelector(".calendar-grid");
+
+        // Создаем новый календарь
+        const newCalendar = this.createCalendarGrid(this.currentDate);
+
+        // Позиционируем новый календарь
+        newCalendar.style.position = "absolute";
+        newCalendar.style.top = "0";
+        newCalendar.style.left = offset > 0 ? "100%" : "-100%";
+        newCalendar.style.opacity = "0";
+
+        // Добавляем новый календарь в контейнер
+        container.appendChild(newCalendar);
+
+        // Запускаем анимацию
+        setTimeout(() => {
+            oldCalendar.style.transform = `translateX(${offset > 0 ? "-100%" : "100%"})`;
+            oldCalendar.style.opacity = "0";
+
+            newCalendar.style.transform = "translateX(0)";
+            newCalendar.style.opacity = "1";
+        }, 10);
+
+        // Удаляем старый календарь после завершения анимации
+        setTimeout(() => {
+            oldCalendar.remove();
+            newCalendar.style.position = "static";
+            newCalendar.style.transform = "none";
+        }, 300); // Длительность анимации (300 мс)
+
+        this.dateDisplay.setText(this.getFormattedDate()); // Обновляем заголовок
+    }
+
+    createCalendarGrid(date) {
+        const calendarEl = document.createElement("div");
+        calendarEl.classList.add("calendar-grid");
+        this.renderCalendarGrid(calendarEl, date);
+        return calendarEl;
     }
 
     renderCalendar(container) {
@@ -251,6 +304,34 @@ class CalendarView extends obsidian.ItemView {
                 cls: `calendar-day ${this.isToday(day, month, year) ? "today" : ""}`,
                 text: day.toString()
             });
+
+            // // Число дня
+            // dayEl.createEl("div", {
+            //     text: day.toString(),
+            //     cls: "day-number"
+            // });
+
+            // Точки для заметок
+            const dotsEl = dayEl.createEl("div", { cls: "note-dots" });
+
+            // Проверяем, есть ли заметки для этого дня
+            const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+            const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
+            const file = this.app.vault.getAbstractFileByPath(notePath);
+
+            if (file) {
+                // Если заметка существует, загружаем её содержимое
+                this.app.vault.read(file).then((content) => {
+                    const notes = content.split("\n").filter(line => line.trim() !== "");
+                    const noteCount = notes.length;
+
+                    // Добавляем точки
+                    for (let i = 0; i < noteCount; i++) {
+                        dotsEl.createEl("div", { cls: "note-dot" });
+                    }
+                });
+            }
+
             dayEl.addEventListener("click", () => {
                 this.openEventModal(day, month, year);
             });
@@ -341,6 +422,57 @@ class CalendarView extends obsidian.ItemView {
         });
 
         modal.open();
+    }
+
+    renderTodayEvents(container) {
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+        const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
+
+        // Создаем контейнер для списка событий
+        const eventsContainer = container.createEl("div", { cls: "today-events" });
+        eventsContainer.createEl("h3", { text: "События на сегодня", cls: "today-events-title" });
+
+        // Проверяем, есть ли заметки для сегодняшнего дня
+        const file = this.app.vault.getAbstractFileByPath(notePath);
+        if (file) {
+            // Если заметка существует, загружаем её содержимое
+            this.app.vault.read(file).then((content) => {
+                const notes = content.split("\n").filter(line => line.trim() !== "");
+
+                // Отображаем каждую заметку
+                notes.forEach((note, index) => {
+                    const noteEl = eventsContainer.createEl("div", { cls: "today-event" });
+
+                    // Текст заметки
+                    noteEl.createEl("div", {
+                        text: note,
+                        cls: "today-event-text"
+                    });
+
+                    // Кнопка для удаления заметки
+                    const deleteButton = noteEl.createEl("button", {
+                        text: "Удалить",
+                        cls: "today-event-button"
+                    });
+                    deleteButton.addEventListener("click", async () => {
+                        const updatedNotes = notes.filter((_, i) => i !== index);
+                        if (updatedNotes.length > 0) {
+                            await this.app.vault.modify(file, updatedNotes.join("\n"));
+                        } else {
+                            await this.app.vault.delete(file);
+                        }
+                        this.renderTodayEvents(container); // Обновляем список событий
+                    });
+                });
+            });
+        } else {
+            // Если заметок нет, отображаем сообщение
+            eventsContainer.createEl("div", {
+                text: "Событий на сегодня нет.",
+                cls: "today-event-empty"
+            });
+        }
     }
 
     async saveEventToNote(dateStr, content) {
