@@ -45,7 +45,7 @@
     cursor: default;
 }
 .calendar-day.empty:hover {
-    background-color: #f9f9f9;
+    background-color: transparent;
 }
 .calendar-day:hover {
     background-color: #e0e0e0;
@@ -121,6 +121,15 @@
     color: #888;
     margin-bottom: 10px;
 }
+.note-input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+}
 
 .day-number {
     font-size: 1.2em;
@@ -156,27 +165,65 @@
     border-radius: 8px;
 }
 .today-events-title {
-    font-size: 1.1em;
+    font-size: 1.2em;
     font-weight: bold;
     margin-bottom: 10px;
     color: #333;
 }
 .today-event {
-    padding: 5px 0;
-    margin-bottom: 5px;
+    padding: 5px;
+    margin-bottom: 10px;
     font-size: 0.9em;
     color: #555;
-    border-bottom: 1px solid #eee;
 }
 .today-event:last-child {
     border-bottom: none;
 }
 .today-event-text {
-    margin: 0;
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #555;
+}
+.today-event-separator {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
 }
 .today-event-empty {
     text-align: center;
     color: #888;
     font-style: italic;
     font-size: 0.9em;
+}
+.today-event-text:nth-child(1) {
+    font-weight: bold;
+    font-size: 18px;
+
+}
+
+/* Стили для модального окна с заметками */
+.event-note {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+.event-note-text {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #555;
+}
+.event-note-separator {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
+}
+.event-note-empty {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+.event-note-text:nth-child(1) {
+    font-weight: bold;
+    font-size: 18px;
+
 }
