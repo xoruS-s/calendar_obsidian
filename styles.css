@@ -158,7 +158,7 @@
 .note-dot:nth-child(9) { background-color: #ffeaa7; }
 .note-dot:nth-child(10) { background-color: #00b894; }
 
-.today-events {
+/*.today-events {
     margin-top: 20px;
     padding: 10px;
     background-color: #f8f8f8;
@@ -199,7 +199,7 @@
     font-weight: bold;
     font-size: 18px;
 
-}
+}*/
 
 /* Стили для модального окна с заметками */
 .event-note {
@@ -226,4 +226,149 @@
     font-weight: bold;
     font-size: 18px;
 
+}
+
+/* Линия-разделитель */
+.calendar-divider {
+    border: 0;
+    height: 1px;
+    margin: 20px 0;
+}
+
+/* Заголовок "События на сегодня" */
+.today-events-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    /*color: var(--text-normal);*/
+    margin-bottom: 20px;
+}
+
+/*Канбан карточки*/
+.kanban-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+.kanban-card {
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 300px; /* Максимальная ширина карточки */
+    min-width: 150px;
+    word-wrap: break-word;
+    overflow: hidden;
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: .3s;
+}
+.kanban-card-text {
+    margin: 5px 0;
+    font-size: 14px;
+    /*color: var(--text-normal);*/
+}
+.kanban-time {
+    margin: 15px 0;
+    padding: 5px;
+    /*border: 1px solid var(--background-modifier-border);*/
+    border: 1px solid #555555;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+    /*background-color: #55efc4;*/
+}
+.kanban-card-text:nth-child(1) {
+    font-size: 18px;
+    font-weight: bold;
+}
+.kanban-empty {
+    /*color: var(--text-muted);*/
+    font-style: italic;
+}
+.kanban-card:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: .1s;
+}
+.kanban-tag {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Стили для модального окна карточки*/
+.note-modal-content {
+    /*padding: 20px;*/
+    opacity: 0;
+    transform: translateY(20px);
+    /*transition: opacity 0.3s ease, transform 0.3s ease;*/
+}
+.note-modal-text {
+    margin: 10px 0;
+    font-size: 14px;
+}
+.note-modal-text:nth-child(1) {
+    font-size: 30px;
+    font-weight: bold;
+}
+.note-modal-option {
+    font-size: 17px;
+    padding: 10px 0 10px 0;
+}
+.note-modal-time {
+    margin: 10px 0 15px 0;
+    padding: 5px 0 10px 0;
+    border: 1px solid ;
+    border-radius: 4px;
+    font-size: 20px;
+    text-align: center;
+}
+.option-divider {
+    margin: 0;
+    border-bottom: 3px solid #B53471;
+}
+
+/* Стили для модального окна управления тегами */
+.tag-settings-modal {
+    padding: 20px;
+    cursor: pointer;
+}
+.tags-list {
+    margin-bottom: 20px;
+}
+.tag-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.tag-color {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.tag-name {
+    flex-grow: 1;
+    margin-right: 10px;
+    padding: 5px;
+    /*border: 1px solid var(--background-modifier-border);*/
+    border-radius: 4px;
+}
+.tag-delete-button {
+    /*background-color: var(--background-secondary);*/
+    /*border: 1px solid var(--background-modifier-border);*/
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.add-tag-button {
+    width: 100%;
+    padding: 10px;
+    /*background-color: var(--background-secondary);*/
+    /*border: 1px solid var(--background-modifier-border);*/
+    border-radius: 4px;
+    cursor: pointer;
+}
+.tag-text {
+    font-weight: bold;
 }
