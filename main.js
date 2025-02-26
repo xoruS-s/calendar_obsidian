@@ -114,6 +114,7 @@ class CalendarView extends obsidian.ItemView {
         menuBtn.innerHTML = "&#9776;"; // Иконка меню
         menuBtn.addEventListener("click", () => this.openTagSettingsModal());
     }
+
     renderCalendar(container) {
         const calendarEl = container.createEl("div", { cls: "calendar-grid" }); /////////////////////////////////////////////////////
         this.renderCalendarGrid(calendarEl, this.currentDate);
@@ -177,6 +178,7 @@ class CalendarView extends obsidian.ItemView {
             });
         }
     }
+
     renderTag(container, tag) {
         const tagEl = container.createEl("div", { cls: "tag-item" });
 
@@ -346,16 +348,6 @@ class CalendarView extends obsidian.ItemView {
         return `${month} ${year}`;
     }
     changeMonth(offset) {
-        // const prevDate = new Date(this.currentDate);
-        // this.currentDate.setMonth(this.currentDate.getMonth() + offset);
-        //
-        // // Автоматическое изменение года при переходе через декабрь/январь
-        // if (this.currentDate.getMonth() !== (prevDate.getMonth() + offset + 12) % 12) {
-        //     this.currentDate.setFullYear(this.currentDate.getFullYear() + (offset > 0 ? 1 : -1));
-        // }
-        //
-        // this.updateCalendar();
-
         const prevDate = new Date(this.currentDate);
         this.currentDate.setMonth(this.currentDate.getMonth() + offset);
 
