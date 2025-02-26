@@ -257,8 +257,10 @@ class CalendarView extends obsidian.ItemView {
                             }
                             else if (line.includes("Тег:")) {
                                 const tagEl = card.createEl("div", { cls: "kanban-tag" });
-                                tagEl.setText(value);
+                                tagEl.setText(`#${value}`); // Добавляем знак "#"
                                 tagEl.style.color = await this.getTagColor(value);
+                                const tagColor = await this.getTagColor(value); // Получаем цвет тега
+                                tagEl.style.border = `1px solid ${tagColor}`; // Добавляем границу
                             }
                             else {
                                 card.createEl("div", {
@@ -268,9 +270,13 @@ class CalendarView extends obsidian.ItemView {
                             }
                         }
                     });
+
+                    // Добавляем кнопки при наведении
+                    this.addHoverButtons(card, note);
                 });
             });
-        } else {
+        }
+        else {
             kanbanContainer.createEl("div", {
                 text: "Событий на сегодня нет.",
                 cls: "kanban-empty"
@@ -507,6 +513,46 @@ class CalendarView extends obsidian.ItemView {
 
         // Открываем модальное окно
         modal.open();
+    }
+    addHoverButtons(card, note) {
+        // Контейнер для кнопок
+        const hoverButtons = card.createEl("div", { cls: "kanban-hover-buttons" });
+
+        // Кнопка "Изменить" (слева)
+        const editButton = hoverButtons.createEl("button", {
+            text: "✏️",
+            cls: "kanban-edit-button"
+        });
+        editButton.addEventListener("click", () => {
+            // Логика для редактирования заметки
+            console.log("Редактировать заметку:", note);
+        });
+
+        // Кнопка "Закрепить" (по центру)
+        const pinButton = hoverButtons.createEl("button", {
+            text: "📌",
+            cls: "kanban-pin-button"
+        });
+        pinButton.addEventListener("click", () => {
+            // Логика для закрепления заметки
+            console.log("Закрепить заметку:", note);
+            card.classList.toggle("pinned");
+            if (card.classList.contains("pinned")) {
+                // Перемещаем карточку в начало списка
+                card.parentElement.prepend(card);
+            }
+        });
+
+        // Кнопка "Удалить" (справа)
+        const deleteButton = hoverButtons.createEl("button", {
+            text: "🗑️",
+            cls: "kanban-delete-button"
+        });
+        deleteButton.addEventListener("click", () => {
+            // Логика для удаления заметки
+            console.log("Удалить заметку:", note);
+            card.remove();
+        });
     }
 
     // async addNewTag(container) {
