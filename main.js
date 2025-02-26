@@ -186,10 +186,10 @@ class CalendarView extends obsidian.ItemView {
             value: tag.color,
             cls: "tag-color-input"
         });
-        // colorInput.addEventListener("change", async (e) => {
-        //     tag.color = e.target.value;
-        //     await this.saveTags().then();
-        // });
+        colorInput.addEventListener("change", async (e) => {
+            tag.color = e.target.value;
+            await this.saveTags().then();
+        });
 
         // Название тега
         const nameInput = tagEl.createEl("input", {
@@ -197,10 +197,10 @@ class CalendarView extends obsidian.ItemView {
             value: tag.name,
             cls: "tag-name"
         });
-        // nameInput.addEventListener("change", async (e) => {
-        //     tag.name = e.target.value;
-        //     await this.saveTags().then();
-        // });
+        nameInput.addEventListener("change", async (e) => {
+            tag.name = e.target.value;
+            await this.saveTags().then();
+        });
 
         // Кнопка удаления тега
         const deleteButton = tagEl.createEl("button", {
@@ -509,23 +509,23 @@ class CalendarView extends obsidian.ItemView {
         modal.open();
     }
 
-    async addNewTag(container) {
-        // const newTag = { name: "Новый тег", color: "#cccccc" };
-        // this.renderTag(container, newTag);
-        // this.saveTags();
-
-        const newTag = { name: "Новый тег", color: "#cccccc" };
-        this.renderTag(container, newTag);
-
-        // Загружаем текущие теги
-        const tags = await this.loadTags();
-
-        // Добавляем новый тег
-        tags.push(newTag);
-
-        // Сохраняем обновленный список тегов
-        await this.saveTags(tags);
-    }
+    // async addNewTag(container) {
+    //     // const newTag = { name: "Новый тег", color: "#cccccc" };
+    //     // this.renderTag(container, newTag);
+    //     // this.saveTags();
+    //
+    //     const newTag = { name: "Новый тег", color: "#cccccc" };
+    //     this.renderTag(container, newTag);
+    //
+    //     // Загружаем текущие теги
+    //     const tags = await this.loadTags();
+    //
+    //     // Добавляем новый тег
+    //     tags.push(newTag);
+    //
+    //     // Сохраняем обновленный список тегов
+    //     await this.saveTags(tags);
+    // }
     async openTagSettingsModal() {
         // const modal = new obsidian.Modal(this.app);
         // modal.titleEl.setText("Управление тегами");
