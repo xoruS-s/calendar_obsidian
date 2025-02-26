@@ -186,10 +186,10 @@ class CalendarView extends obsidian.ItemView {
             value: tag.color,
             cls: "tag-color-input"
         });
-        colorInput.addEventListener("change", async (e) => {
-            tag.color = e.target.value;
-            await this.saveTags().then();
-        });
+        // colorInput.addEventListener("change", async (e) => {
+        //     tag.color = e.target.value;
+        //     await this.saveTags().then();
+        // });
 
         // Название тега
         const nameInput = tagEl.createEl("input", {
@@ -197,10 +197,10 @@ class CalendarView extends obsidian.ItemView {
             value: tag.name,
             cls: "tag-name"
         });
-        nameInput.addEventListener("change", async (e) => {
-            tag.name = e.target.value;
-            await this.saveTags().then();
-        });
+        // nameInput.addEventListener("change", async (e) => {
+        //     tag.name = e.target.value;
+        //     await this.saveTags().then();
+        // });
 
         // Кнопка удаления тега
         const deleteButton = tagEl.createEl("button", {
@@ -208,9 +208,6 @@ class CalendarView extends obsidian.ItemView {
             cls: "tag-delete-button"
         });
         deleteButton.addEventListener("click", async () => {
-            // tagEl.remove();
-            // await this.saveTags().then();
-
             tagEl.remove();
             const tags = await this.loadTags();
             const updatedTags = tags.filter(t => t.name !== tag.name);

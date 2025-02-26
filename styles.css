@@ -282,6 +282,7 @@
 .kanban-card-text:nth-child(1) {
     font-size: 18px;
     font-weight: bold;
+    text-transform: uppercase;
 }
 .kanban-empty {
     /*color: var(--text-muted);*/
@@ -310,6 +311,7 @@
 .note-modal-text:nth-child(1) {
     font-size: 30px;
     font-weight: bold;
+    text-transform: uppercase;
 }
 .note-modal-option {
     font-size: 17px;
