@@ -333,7 +333,7 @@
 /* Стили для модального окна управления тегами */
 .tag-settings-modal {
     padding: 20px;
-    cursor: pointer;
+    width: 300px;
 }
 .tags-list {
     margin-bottom: 20px;
@@ -343,46 +343,43 @@
     align-items: center;
     margin-bottom: 10px;
 }
-.tag-color {
-    width: 6px;
-    height: 6px;
+.tag-color-input {
     border-radius: 50%;
-    margin-right: 10px;
 }
 .tag-name {
     flex-grow: 1;
-    margin-right: 10px;
+    margin: 0 5px 0 5px;
     padding: 5px;
-    /*border: 1px solid var(--background-modifier-border);*/
     border-radius: 4px;
+    width: 50%;
 }
 .tag-delete-button {
-    /*background-color: var(--background-secondary);*/
-    /*border: 1px solid var(--background-modifier-border);*/
-    border-radius: 4px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-.add-tag-button {
-    width: 100%;
-    padding: 10px;
-    /*background-color: var(--background-secondary);*/
-    /*border: 1px solid var(--background-modifier-border);*/
     border-radius: 4px;
     cursor: pointer;
+    margin: 0 0 0 5px;
 }
-.tag-text {
-    font-weight: bold;
+.tag-divider {
+    margin: 10px 0 10px 0;
+}
+.new-tag-container {
+    display: flex;
+    /*justify-content: center;*/
+    align-items: center;
+}
+.new-tag-color {
+    margin: 0 5px 0 0;
+    cursor: pointer;
 }
 .new-tag-input {
-    width: 100%;
+    flex-grow: 1;
+    /*width: 100%;*/
     padding: 5px;
-    margin-bottom: 10px;
     border-radius: 4px;
+    margin: 0 5px 0 0;
 }
 .add-tag-button {
-    width: 100%;
     padding: 10px;
     border-radius: 4px;
     cursor: pointer;
+    margin: 0 0 0 5px;
 }

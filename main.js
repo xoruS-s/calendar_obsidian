@@ -186,10 +186,10 @@ class CalendarView extends obsidian.ItemView {
             value: tag.color,
             cls: "tag-color-input"
         });
-        colorInput.addEventListener("change", async (e) => {
-            tag.color = e.target.value;
-            await this.saveTags().then();
-        });
+        // colorInput.addEventListener("change", async (e) => {
+        //     tag.color = e.target.value;
+        //     await this.saveTags().then();
+        // });
 
         // Название тега
         const nameInput = tagEl.createEl("input", {
@@ -197,14 +197,14 @@ class CalendarView extends obsidian.ItemView {
             value: tag.name,
             cls: "tag-name"
         });
-        nameInput.addEventListener("change", async (e) => {
-            tag.name = e.target.value;
-            await this.saveTags().then();
-        });
+        // nameInput.addEventListener("change", async (e) => {
+        //     tag.name = e.target.value;
+        //     await this.saveTags().then();
+        // });
 
         // Кнопка удаления тега
         const deleteButton = tagEl.createEl("button", {
-            text: "Удалить",
+            text: "-",
             cls: "tag-delete-button"
         });
         deleteButton.addEventListener("click", async () => {
@@ -567,25 +567,28 @@ class CalendarView extends obsidian.ItemView {
         // Разделитель
         contentEl.createEl("hr", { cls: "tag-divider" });
 
+        // Создаем контейнер для нового тега
+        const newTagContainer = contentEl.createEl("div", { cls: "new-tag-container" });
+
+        // Поле для выбора цвета нового тега
+        // contentEl.createEl("label", { text: "Цвет тега:" });
+        const newTagColorInput = newTagContainer.createEl("input", {
+            type: "color",
+            value: "#000000", // Черный цвет по умолчанию
+            cls: "new-tag-color"
+        });
+
         // Поле для ввода названия нового тега
-        contentEl.createEl("label", { text: "Название тега:" });
-        const newTagNameInput = contentEl.createEl("input", {
+        // contentEl.createEl("label", { text: "Название тега:" });
+        const newTagNameInput = newTagContainer.createEl("input", {
             type: "text",
             placeholder: "Введите название тега...",
             cls: "new-tag-input"
         });
 
-        // Поле для выбора цвета нового тега
-        contentEl.createEl("label", { text: "Цвет тега:" });
-        const newTagColorInput = contentEl.createEl("input", {
-            type: "color",
-            value: "#000000", // Черный цвет по умолчанию
-            cls: "new-tag-input"
-        });
-
         // Кнопка для добавления нового тега
-        const addTagButton = contentEl.createEl("button", {
-            text: "Добавить тег",
+        const addTagButton = newTagContainer.createEl("button", {
+            text: "+",
             cls: "add-tag-button"
         });
         addTagButton.addEventListener("click", async () => {
