@@ -158,49 +158,6 @@
 .note-dot:nth-child(9) { background-color: #ffeaa7; }
 .note-dot:nth-child(10) { background-color: #00b894; }
 
-/*.today-events {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f8f8f8;
-    border-radius: 8px;
-}
-.today-events-title {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-}
-.today-event {
-    padding: 5px;
-    margin-bottom: 10px;
-    font-size: 0.9em;
-    color: #555;
-}
-.today-event:last-child {
-    border-bottom: none;
-}
-.today-event-text {
-    margin: 5px 0;
-    font-size: 0.9em;
-    color: #555;
-}
-.today-event-separator {
-    border: 0;
-    border-top: 1px solid #eee;
-    margin: 10px 0;
-}
-.today-event-empty {
-    text-align: center;
-    color: #888;
-    font-style: italic;
-    font-size: 0.9em;
-}
-.today-event-text:nth-child(1) {
-    font-weight: bold;
-    font-size: 18px;
-
-}*/
-
 /* Стили для модального окна с заметками */
 .event-note {
     padding: 10px;
@@ -333,7 +290,7 @@
 /* Стили для модального окна управления тегами */
 .tag-settings-modal {
     padding: 20px;
-    width: 300px;
+    /*width: 300px;*/
 }
 .tags-list {
     margin-bottom: 20px;
