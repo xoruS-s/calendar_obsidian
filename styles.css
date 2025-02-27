@@ -223,7 +223,7 @@
     z-index: 0;
 }
 .kanban-card-text {
-    margin: 5px 0;
+    margin: 5px 0 40px 0 !important;
     font-size: 14px;
 }
 .kanban-time {
@@ -241,6 +241,7 @@
     font-weight: bold;
     text-transform: uppercase;
     color: #535c68;
+    margin-bottom: 5px !important;
 }
 .kanban-empty {
     /*color: var(--text-muted);*/
@@ -258,9 +259,12 @@
     left: 10px;
     padding: 0 5px;
     border-radius: 4px;
-    background-color: lightgrey;
+    background-color: #f5f6fa;
 }
-.kanban-hover-buttons {
+.kanban-card-option {
+    margin-bottom: 40px;
+}
+/*.kanban-hover-buttons {
     position: absolute;
     top: -30px; left: 0; right: 0;
     display: flex;
@@ -299,10 +303,10 @@
     width: 40px; height: 40px;
     z-index: 10;
     transition: .2s;
-}                                       /* Кнопки при наведении на карточку */
+}
 .kanban-card.pinned {
     border: 2px solid var(--interactive-accent);
-}                                         /* Закрепленная карточка */
+}*/
 
 /* Стили для модального окна карточки*/
 .note-modal-content {

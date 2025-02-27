@@ -77,6 +77,17 @@ class CalendarView extends obsidian.ItemView {
         this.renderTodayEvents(container); // Добавляем список событий на сегодня
     }
 
+    // Обновление компонентов
+    async refreshUI() {
+        // Обновляем календарь
+        this.updateCalendar();
+
+        // Обновляем канбан
+        await this.renderTodayEvents(this.containerEl);
+
+        // Обновляем другие компоненты (если есть)
+    }
+
     renderHeader(container) {
         const header = container.createEl("div", { cls: "calendar-header" });
 
@@ -179,8 +190,17 @@ class CalendarView extends obsidian.ItemView {
         }
     }
 
+    // Настроки тегов
     renderTag(container, tag) {
         const tagEl = container.createEl("div", { cls: "tag-item" });
+
+        // // Отображаем цвет тега
+        // const colorCircle = tagEl.createEl("div", { cls: "tag-color" });
+        // colorCircle.style.backgroundColor = tag.color;
+        //
+        // // Отображаем название тега
+        // const nameEl = tagEl.createEl("div", { cls: "tag-name" });
+        // nameEl.setText(tag.name);
 
         // Поле выбора цвета
         const colorInput = tagEl.createEl("input", {
@@ -188,12 +208,12 @@ class CalendarView extends obsidian.ItemView {
             value: tag.color,
             cls: "tag-color-input"
         });
-        // colorInput.addEventListener("change", async (e) => {
-        //     tag.color = e.target.value;
-        //     await this.saveTags().then();
-        // });
+        colorInput.addEventListener("change", async (e) => {
+            tag.color = e.target.value;
+            await this.saveTags().then();
+        });
 
-        // Название тега
+        // Кнопка название тега
         const nameInput = tagEl.createEl("input", {
             type: "text",
             value: tag.name,
@@ -203,6 +223,12 @@ class CalendarView extends obsidian.ItemView {
         //     tag.name = e.target.value;
         //     await this.saveTags().then();
         // });
+
+        // Кнопка редактирования тега
+        const editButton = tagEl.createEl("button", {
+            text: "Редактировать",
+            cls: "tag-edit-button"
+        });
 
         // Кнопка удаления тега
         const deleteButton = tagEl.createEl("button", {
@@ -215,8 +241,19 @@ class CalendarView extends obsidian.ItemView {
             const updatedTags = tags.filter(t => t.name !== tag.name);
             await this.saveTags(updatedTags);
         });
+
+        // // Обработчик для кнопки "Редактировать"
+        // editButton.addEventListener("click", () => {
+        //     // Переключаемся в режим редактирования
+        //     this.toggleEditMode(tagEl, tag, editButton);
+        // });
+        //
+        // // Добавляем кнопки в контейнер
+        // tagEl.append(editButton, deleteButton);
+        // container.append(tagEl);
     }
 
+    // Генерирование текущих событий (на сегодняшний день)
     async renderTodayEvents(container) {
         const today = new Date();
         const dateStr = `${today.getDate().toString().padStart(2, '0')}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getFullYear()}`;
@@ -264,6 +301,12 @@ class CalendarView extends obsidian.ItemView {
                                 const tagColor = await this.getTagColor(value); // Получаем цвет тега
                                 tagEl.style.border = `1px solid ${tagColor}`; // Добавляем границу
                             }
+                            else if (line.includes("Дополнительно:")) {
+                                card.createEl("div", {
+                                    text: value,
+                                    cls: "kanban-card-option"
+                                });
+                            }
                             else {
                                 card.createEl("div", {
                                     text: value,
@@ -273,8 +316,8 @@ class CalendarView extends obsidian.ItemView {
                         }
                     });
 
-                    // Добавляем кнопки при наведении
-                    this.addHoverButtons(card, note);
+                    // // Добавляем кнопки при наведении
+                    // this.addHoverButtons(card, note);
                 });
             });
         }
@@ -325,10 +368,13 @@ class CalendarView extends obsidian.ItemView {
         // }
     }
 
+    // Переход на текущий день
     goToToday() {
         this.currentDate = new Date(); // Устанавливаем текущую дату
         this.updateCalendar(); // Обновляем календарь
     }
+
+    // Метод обновления календаря при переходе на другие месяцы
     updateCalendar() {
         const container = this.containerEl.children[1];
         const oldCalendar = container.querySelector(".calendar-grid");
@@ -342,6 +388,7 @@ class CalendarView extends obsidian.ItemView {
         this.renderCalendar(container);
         this.dateDisplay.setText(this.getFormattedDate()); // Обновляем заголовок
     }
+
     getFormattedDate() {
         const month = MONTHS_RU[this.currentDate.getMonth()];
         const year = this.currentDate.getFullYear();
@@ -406,7 +453,8 @@ class CalendarView extends obsidian.ItemView {
             year === today.getFullYear()
         );
     }
-    openEventModal(day, month, year) {
+
+    async openEventModal(day, month, year) {
         const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;//EDITED
         const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
 
@@ -435,6 +483,26 @@ class CalendarView extends obsidian.ItemView {
                             });
                         }
                     });
+                    // Кнопка редактирования заметки
+                    const editButton = contentEl.createEl("button", {
+                        text: "✏️",
+                        cls: "edit-note-button"
+                    });
+                    editButton.addEventListener("click", () => {
+                        modal.close();
+                        this.openEditNoteModal(day, month, year, index);
+                    });
+
+                    // Кнопка удаления заметки
+                    const deleteButton = contentEl.createEl("button", {
+                        text: "🗑️",
+                        cls: "delete-note-button"
+                    });
+                    deleteButton.addEventListener("click", async () => {
+                        await this.deleteNote();
+
+                        await this.refreshUI(); // Обновление интерфейса
+                    });
 
                     // Добавляем разделитель между заметками
                     if (notes.length > 1) {
@@ -459,7 +527,8 @@ class CalendarView extends obsidian.ItemView {
         });
 
         modal.open();
-    }
+    }                                                                         // [Открытие заметки из календаря]
+
     openNoteModal(noteContent) {
         const modal = new obsidian.Modal(this.app);
         modal.titleEl.setText("Просмотр заметки");
@@ -545,6 +614,75 @@ class CalendarView extends obsidian.ItemView {
             console.log("Удалить заметку:", note);
             card.remove();
         });
+    }
+
+    // Логика переключения между режимами редактирования и просмотра тегов
+    toggleEditMode(tagEl, tag, editButton) {
+        const isEditing = tagEl.classList.contains("editing");
+
+        if (isEditing) {
+            // Выходим из режима редактирования
+            tagEl.classList.remove("editing");
+
+            // Сохраняем изменения
+            const nameInput = tagEl.querySelector(".tag-name-input");
+            const colorInput = tagEl.querySelector(".tag-color-input");
+
+            if (nameInput && colorInput) {
+                const newName = nameInput.value.trim();
+                const newColor = colorInput.value;
+
+                if (newName) {
+                    tag.name = newName;
+                    tag.color = newColor;
+
+                    // Обновляем отображение
+                    const nameEl = tagEl.querySelector(".tag-name");
+                    const colorCircle = tagEl.querySelector(".tag-color");
+
+                    if (nameEl && colorCircle) {
+                        nameEl.setText(newName);
+                        colorCircle.style.backgroundColor = newColor;
+                    }
+
+                    // Удаляем поля ввода
+                    nameInput.replaceWith(nameEl);
+                    colorInput.replaceWith(colorCircle);
+
+                    // Сохраняем теги
+                    this.saveTags(this.tags);
+                } else {
+                    alert("Название тега не может быть пустым!");
+                }
+            }
+
+            // Возвращаем кнопку "Редактировать"
+            editButton.setText("Редактировать");
+        } else {
+            // Входим в режим редактирования
+            tagEl.classList.add("editing");
+
+            // Заменяем название тега на поле ввода
+            const nameEl = tagEl.querySelector(".tag-name");
+            const nameInput = tagEl.createEl("input", {
+                type: "text",
+                value: tag.name,
+                cls: "tag-name-input"
+            });
+            nameEl.replaceWith(nameInput);
+
+            // Заменяем цвет тега на поле выбора цвета
+            const colorCircle = tagEl.querySelector(".tag-color");
+            const colorInput = tagEl.createEl("input", {
+                type: "color",
+                value: tag.color,
+                cls: "tag-color-input"
+            });
+            colorCircle.replaceWith(colorInput);
+
+            // Меняем кнопку "Редактировать" на "Сохранить"
+            editButton.setText("Сохранить");
+        }
     }
 
     // async addNewTag(container) {
@@ -793,6 +931,9 @@ class CalendarView extends obsidian.ItemView {
                     }
                     modal.close();
                     this.openEventModal(day, month, year); // Переоткрываем окно событий
+
+                    // Обновляем интерфейс
+                    await this.refreshUI();
                 } catch (error) {
                     console.error("Ошибка сохранения заметки:", error);
                 }
@@ -858,6 +999,23 @@ class CalendarView extends obsidian.ItemView {
         // Сохраняем теги в файл
         await this.app.vault.adapter.write(tagsFilePath, JSON.stringify(tags, null, 2));
     }
+
+    async deleteNote(day, month, year, index) {
+        const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;
+        const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
+        const file = this.app.vault.getAbstractFileByPath(notePath);
+
+        if (file) {
+            const content = await this.app.vault.read(file);
+            const notes = content.split("---").filter(note => note.trim() !== "");
+            const updatedContent = notes.filter((_, i) => i !== index).join("\n\n---\n\n");
+
+            await this.app.vault.modify(file, updatedContent);
+
+            // Обновляем интерфейс
+            await this.refreshUI();
+        }
+    }                                                                      // [Удаление заметки]
 
     async saveEventToNote(dateStr, content) {
         const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
