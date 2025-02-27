@@ -72,64 +72,41 @@ class CalendarView extends obsidian.ItemView {
     async onOpen() {
         const container = this.containerEl.children[1];
         container.empty();
-        this.renderHeader(container);
-        this.renderCalendar(container);
-        this.renderTodayEvents(container); // Добавляем список событий на сегодня
+
+        this.renderHeader(container);               // Рендер шапки календаря
+        this.renderCalendar(container);             // Рендер календаря
+        await this.renderTodayEvents(container);    // Рендер списока событий на сегодня
     }
 
     // Обновление компонентов
     async refreshUI() {
-        // Обновляем календарь
-        this.updateCalendar();
+        const container = this.containerEl.children[1];
+        container.empty(); // Очищаем контейнер перед обновлением
+        this.renderHeader(container);
+        this.renderCalendar(container);
+        await this.renderTodayEvents(container);
 
-        // Обновляем канбан
-        await this.renderTodayEvents(this.containerEl);
-
-        // Обновляем другие компоненты (если есть)
-    }
-
-    renderHeader(container) {
-        const header = container.createEl("div", { cls: "calendar-header" });
-
-        // Кнопка предыдущего месяца
-        const prevBtn = header.createEl("button", {
-            text: "<",
-            cls: "nav-button"
-        });
-        prevBtn.addEventListener("click", () => this.changeMonth(-1));
-
-        // Отображение текущей даты
-        this.dateDisplay = header.createEl("div", {
-            cls: "current-date",
-            text: this.getFormattedDate()
-        });
-
-        // Кнопка следующего месяца
-        const nextBtn = header.createEl("button", {
-            text: ">",
-            cls: "nav-button"
-        });
-        nextBtn.addEventListener("click", () => this.changeMonth(1));
-
-        // Кнопка "Сегодня"
-        const todayBtn = header.createEl("button", {
-            text: "Сегодня",
-            cls: "nav-button"
-        });
-        todayBtn.addEventListener("click", () => this.goToToday());
-
-        // Кнопка меню
-        const menuBtn = header.createEl("button", {
-            cls: "menu-button"
-        });
-        menuBtn.innerHTML = "&#9776;"; // Иконка меню
-        menuBtn.addEventListener("click", () => this.openTagSettingsModal());
+        // // Обновляем календарь
+        // this.updateCalendar();
+        //
+        // // Обновляем канбан
+        // await this.renderTodayEvents(this.containerEl);
+        //
+        // // Обновляем другие компоненты (если есть)
     }
 
     renderCalendar(container) {
-        const calendarEl = container.createEl("div", { cls: "calendar-grid" }); /////////////////////////////////////////////////////
+        const calendarEl = container.querySelector(".calendar-grid");
+        if (calendarEl) {
+            calendarEl.empty(); // Очищаем календарь перед обновлением
+        } else {
+            container.createEl("div", { cls: "calendar-grid" });
+        }
         this.renderCalendarGrid(calendarEl, this.currentDate);
-    }
+
+        // const calendarEl = container.createEl("div", { cls: "calendar-grid" });
+        // this.renderCalendarGrid(calendarEl, this.currentDate);
+    }                                                                                      // [Генерация календаря (часть 1 - по сути можно было в одном методе)]
     renderCalendarGrid(container, date) {
         const month = date.getMonth();
         const year = date.getFullYear();
@@ -188,9 +165,7 @@ class CalendarView extends obsidian.ItemView {
                 this.openEventModal(day, month, year);
             });
         }
-    }
-
-    // Настроки тегов
+    }                                                                            // [Генерация кальндаря (сетка, часть 2)]
     renderTag(container, tag) {
         const tagEl = container.createEl("div", { cls: "tag-item" });
 
@@ -226,13 +201,13 @@ class CalendarView extends obsidian.ItemView {
 
         // Кнопка редактирования тега
         const editButton = tagEl.createEl("button", {
-            text: "Редактировать",
+            text: "✏️",
             cls: "tag-edit-button"
         });
 
         // Кнопка удаления тега
         const deleteButton = tagEl.createEl("button", {
-            text: "-",
+            text: "🗑️",
             cls: "tag-delete-button"
         });
         deleteButton.addEventListener("click", async () => {
@@ -251,9 +226,45 @@ class CalendarView extends obsidian.ItemView {
         // // Добавляем кнопки в контейнер
         // tagEl.append(editButton, deleteButton);
         // container.append(tagEl);
-    }
+    }                                                                                      // [Генерация настройки тегов]
+    renderHeader(container) {
+        const header = container.createEl("div", { cls: "calendar-header" });
 
-    // Генерирование текущих событий (на сегодняшний день)
+        // Кнопка предыдущего месяца
+        const prevBtn = header.createEl("button", {
+            text: "◀",
+            cls: "nav-button"
+        });
+        prevBtn.addEventListener("click", () => this.changeMonth(-1));
+
+        // Отображение текущей даты
+        this.dateDisplay = header.createEl("div", {
+            cls: "current-date",
+            text: this.getFormattedDate()
+        });
+
+        // Кнопка следующего месяца
+        const nextBtn = header.createEl("button", {
+            text: "▶",
+            cls: "nav-button"
+        });
+        nextBtn.addEventListener("click", () => this.changeMonth(1));
+
+        // Кнопка "Сегодня"
+        const todayBtn = header.createEl("button", {
+            text: "Сегодня",
+            cls: "nav-button"
+        });
+        todayBtn.addEventListener("click", () => this.goToToday());
+
+        // Кнопка меню
+        const menuBtn = header.createEl("button", {
+            cls: "menu-button"
+        });
+        // menuBtn.innerHTML = "&#9776;"; // Иконка меню
+        menuBtn.innerHTML = "#";
+        menuBtn.addEventListener("click", () => this.openTagSettingsModal());
+    }                                                                                        // [Генерация шапки календаря]
     async renderTodayEvents(container) {
         const today = new Date();
         const dateStr = `${today.getDate().toString().padStart(2, '0')}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getFullYear()}`;
@@ -266,8 +277,15 @@ class CalendarView extends obsidian.ItemView {
         const title = container.createEl("div", { cls: "today-events-title" });
         title.setText("События на сегодня");
 
-        // Создаем контейнер для канбан-карточек
-        const kanbanContainer = container.createEl("div", { cls: "kanban-container" });
+        // Очищаем контейнер перед обновлением
+        const kanbanContainer = container.querySelector(".kanban-container");
+        if (kanbanContainer) {
+            kanbanContainer.empty();
+        } else {
+
+            // Создаем контейнер для канбан-карточек
+            container.createEl("div", { cls: "kanban-container" });
+        }
 
         // Проверяем, есть ли заметки для сегодняшнего дня
         const file = this.app.vault.getAbstractFileByPath(notePath);
@@ -366,7 +384,7 @@ class CalendarView extends obsidian.ItemView {
         //         cls: "today-event-empty"
         //     });
         // }
-    }
+    }                                                                             // [Генерация событий на сегодня]
 
     // Переход на текущий день
     goToToday() {
@@ -455,7 +473,7 @@ class CalendarView extends obsidian.ItemView {
     }
 
     async openEventModal(day, month, year) {
-        const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;//EDITED
+        const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;
         const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
 
         const modal = new obsidian.Modal(this.app);
@@ -468,7 +486,7 @@ class CalendarView extends obsidian.ItemView {
             this.app.vault.read(file).then((content) => {
                 const notes = content.split("---").filter(note => note.trim() !== "");
 
-                notes.forEach((note) => {
+                notes.forEach((note, index) => {
                     const noteEl = contentEl.createEl("div", { cls: "event-note" });
 
                     // Разделяем заметку на строки и убираем обозначения
@@ -499,9 +517,9 @@ class CalendarView extends obsidian.ItemView {
                         cls: "delete-note-button"
                     });
                     deleteButton.addEventListener("click", async () => {
-                        await this.deleteNote();
+                        await this.deleteNote(day, month, year, index);
 
-                        await this.refreshUI(); // Обновление интерфейса
+                        // await this.refreshUI(); // Обновление интерфейса
                     });
 
                     // Добавляем разделитель между заметками
@@ -1016,6 +1034,129 @@ class CalendarView extends obsidian.ItemView {
             await this.refreshUI();
         }
     }                                                                      // [Удаление заметки]
+    async openEditNoteModal(day, month, year, index) {
+        const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;
+        const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
+        const file = this.app.vault.getAbstractFileByPath(notePath);
+
+        if (!file) {
+            console.error("Файл не найден!");
+            return;
+        }
+
+        const modal = new obsidian.Modal(this.app);
+        modal.titleEl.setText(`Редактировать заметку на ${dateStr}`);
+
+        const contentEl = modal.contentEl;
+
+        // Читаем содержимое файла
+        const content = await this.app.vault.read(file);
+        const notes = content.split("---").filter(note => note.trim() !== "");
+        const noteToEdit = notes[index];
+
+        if (!noteToEdit) {
+            console.error("Заметка не найдена!");
+            return;
+        }
+
+        // Парсим заметку
+        const lines = noteToEdit.trim().split("\n").filter(line => line.trim() !== "");
+        let noteContent = "";
+        let timeFrom = "";
+        let timeTo = "";
+        let tag = "";
+
+        lines.forEach(line => {
+            if (line.startsWith("**Текст:**")) {
+                noteContent = line.split(":**")[1].trim();
+            } else if (line.startsWith("**Время:**")) {
+                const timeParts = line.split(":**")[1].trim().split(" по ");
+                timeFrom = timeParts[0].replace("с ", "").trim();
+                timeTo = timeParts[1].trim();
+            } else if (line.startsWith("**Тег:**")) {
+                tag = line.split(":**")[1].trim();
+            }
+        });
+
+        // Поле для текста заметки
+        contentEl.createEl("label", { text: "Текст заметки:" });
+        const noteInput = contentEl.createEl("textarea", {
+            placeholder: "Введите текст заметки...",
+            cls: "note-input",
+            value: noteContent
+        });
+
+        // Поле для времени "с"
+        contentEl.createEl("label", { text: "Время с:" });
+        const timeFromInput = contentEl.createEl("input", {
+            type: "time",
+            cls: "note-input",
+            value: timeFrom
+        });
+
+        // Поле для времени "по"
+        contentEl.createEl("label", { text: "Время по:" });
+        const timeToInput = contentEl.createEl("input", {
+            type: "time",
+            cls: "note-input",
+            value: timeTo
+        });
+
+        // Поле для выбора тега
+        contentEl.createEl("label", { text: "Тег:" });
+        const tagSelect = contentEl.createEl("select", {
+            cls: "note-input"
+        });
+
+        // Загружаем теги и добавляем их в выпадающий список
+        const tags = await this.loadTags();
+        tags.forEach(t => {
+            const option = tagSelect.createEl("option", {
+                value: t.name,
+                text: t.name
+            });
+            option.style.color = t.color; // Устанавливаем цвет текста
+            if (t.name === tag) {
+                option.selected = true; // Выбираем текущий тег
+            }
+        });
+
+        // Кнопка для сохранения изменений
+        const saveButton = contentEl.createEl("button", {
+            text: "Сохранить",
+            cls: "note-button"
+        });
+        saveButton.addEventListener("click", async () => {
+            const newNoteContent = noteInput.value.trim();
+            const newTimeFrom = timeFromInput.value;
+            const newTimeTo = timeToInput.value;
+            const newTag = tagSelect.value;
+
+            if (newNoteContent) {
+                // Обновляем заметку в списке
+                notes[index] = [
+                    `**Текст:** ${newNoteContent}`,
+                    `**Время:** с ${newTimeFrom} по ${newTimeTo}`,
+                    `**Тег:** ${newTag}`
+                ].join("\n");
+
+                // Сохраняем обновленный список заметок в файл
+                const updatedContent = notes.join("\n\n---\n\n");
+                await this.app.vault.modify(file, updatedContent);
+
+                // Закрываем модальное окно
+                modal.close();
+
+                // Обновляем интерфейс
+                await this.refreshUI();
+            } else {
+                alert("Пожалуйста, введите текст заметки!");
+            }
+        });
+
+        // Открываем модальное окно
+        modal.open();
+    }
 
     async saveEventToNote(dateStr, content) {
         const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
