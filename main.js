@@ -42,9 +42,12 @@ class FullCalendarPlugin extends obsidian.Plugin {
         });
 
         // Активируем вкладку календаря
-        await this.app.workspace.revealLeaf(
-            this.app.workspace.getLeavesOfType(VIEW_TYPE_CALENDAR)[0]
-        );
+        const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CALENDAR)[0];
+        if (leaf) {
+            await this.app.workspace.revealLeaf(leaf);
+        } else {
+            console.error("Не удалось открыть вкладку календаря!");
+        }
     }
     async loadSettings() {
         console.log('Loading settings...');
@@ -71,6 +74,7 @@ class CalendarView extends obsidian.ItemView {
     }
     async onOpen() {
         const container = this.containerEl.children[1];
+        if (!container) { console.error("Контейнер не найден!"); return; }
         container.empty();
 
         this.renderHeader(container);               // Рендер шапки календаря
@@ -96,16 +100,16 @@ class CalendarView extends obsidian.ItemView {
     }
 
     renderCalendar(container) {
-        const calendarEl = container.querySelector(".calendar-grid");
-        if (calendarEl) {
-            calendarEl.empty(); // Очищаем календарь перед обновлением
-        } else {
-            container.createEl("div", { cls: "calendar-grid" });
-        }
-        this.renderCalendarGrid(calendarEl, this.currentDate);
-
-        // const calendarEl = container.createEl("div", { cls: "calendar-grid" });
+        // const calendarEl = container.querySelector(".calendar-grid");
+        // if (calendarEl) {
+        //     calendarEl.empty(); // Очищаем календарь перед обновлением
+        // } else {
+        //     container.createEl("div", { cls: "calendar-grid" });
+        // }
         // this.renderCalendarGrid(calendarEl, this.currentDate);
+
+        const calendarEl = container.createEl("div", { cls: "calendar-grid" });
+        this.renderCalendarGrid(calendarEl, this.currentDate);
     }                                                                                      // [Генерация календаря (часть 1 - по сути можно было в одном методе)]
     renderCalendarGrid(container, date) {
         const month = date.getMonth();
@@ -277,15 +281,17 @@ class CalendarView extends obsidian.ItemView {
         const title = container.createEl("div", { cls: "today-events-title" });
         title.setText("События на сегодня");
 
-        // Очищаем контейнер перед обновлением
-        const kanbanContainer = container.querySelector(".kanban-container");
-        if (kanbanContainer) {
-            kanbanContainer.empty();
-        } else {
+        // // Очищаем контейнер перед обновлением
+        // const kanbanContainer = container.querySelector(".kanban-container");
+        // if (kanbanContainer) {
+        //     kanbanContainer.empty();
+        // } else {
+        //     // Создаем контейнер для канбан-карточек
+        //     container.createEl("div", { cls: "kanban-container" });
+        // }
 
-            // Создаем контейнер для канбан-карточек
-            container.createEl("div", { cls: "kanban-container" });
-        }
+        // Создаем контейнер для канбан-карточек
+        const kanbanContainer = container.createEl("div", { cls: "kanban-container" });
 
         // Проверяем, есть ли заметки для сегодняшнего дня
         const file = this.app.vault.getAbstractFileByPath(notePath);
@@ -517,7 +523,7 @@ class CalendarView extends obsidian.ItemView {
                         cls: "delete-note-button"
                     });
                     deleteButton.addEventListener("click", async () => {
-                        await this.deleteNote(day, month, year, index);
+                        await this.deleteNote(day, month, year, index, modal);
 
                         // await this.refreshUI(); // Обновление интерфейса
                     });
@@ -1018,7 +1024,7 @@ class CalendarView extends obsidian.ItemView {
         await this.app.vault.adapter.write(tagsFilePath, JSON.stringify(tags, null, 2));
     }
 
-    async deleteNote(day, month, year, index) {
+    async deleteNote(day, month, year, index, modal) {
         const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;
         const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
         const file = this.app.vault.getAbstractFileByPath(notePath);
@@ -1030,7 +1036,10 @@ class CalendarView extends obsidian.ItemView {
 
             await this.app.vault.modify(file, updatedContent);
 
-            // Обновляем интерфейс
+            modal.close();
+
+            await this.openEventModal(day, month, year);
+
             await this.refreshUI();
         }
     }                                                                      // [Удаление заметки]
