@@ -195,7 +195,7 @@
 /* Заголовок "События на сегодня" */
 .today-events-title {
     text-align: center;
-    font-size: 18px;
+    font-size: 23px;
     font-weight: bold;
     /*color: var(--text-normal);*/
     margin-bottom: 20px;

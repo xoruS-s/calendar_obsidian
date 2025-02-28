@@ -699,7 +699,7 @@ class CalendarView extends obsidian.ItemView {
                                 tagEl.setText(`#${value}`); // Добавляем знак "#"
                                 tagEl.style.color = await this.getTagColor(value);
                                 const tagColor = await this.getTagColor(value); // Получаем цвет тега
-                                tagEl.style.border = `1px solid ${tagColor}`; // Добавляем границу
+                                tagEl.style.border = `2px solid ${tagColor}`; // Добавляем границу
                             }
                             else if (line.includes("Дополнительно:")) {
                                 card.createEl("div", {
