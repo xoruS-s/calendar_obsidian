@@ -46,7 +46,7 @@ class FullCalendarPlugin extends obsidian.Plugin {
         if (leaf) {
             await this.app.workspace.revealLeaf(leaf);
         } else {
-            console.error("Не удалось открыть вкладку календаря!");
+            // console.error("Не удалось открыть вкладку календаря!");
         }
     }
     async loadSettings() {
@@ -97,7 +97,7 @@ class CalendarView extends obsidian.ItemView {
         // await this.renderTodayEvents(this.containerEl);
         //
         // // Обновляем другие компоненты (если есть)
-    }
+    }                                                                                              // [Якобы, обновление контента]
 
     renderCalendar(container) {
         // const calendarEl = container.querySelector(".calendar-grid");
@@ -392,13 +392,10 @@ class CalendarView extends obsidian.ItemView {
         // }
     }                                                                             // [Генерация событий на сегодня]
 
-    // Переход на текущий день
     goToToday() {
         this.currentDate = new Date(); // Устанавливаем текущую дату
         this.updateCalendar(); // Обновляем календарь
-    }
-
-    // Метод обновления календаря при переходе на другие месяцы
+    }                                                                                                    // [Переход на текущий день]
     updateCalendar() {
         const container = this.containerEl.children[1];
         const oldCalendar = container.querySelector(".calendar-grid");
@@ -411,13 +408,13 @@ class CalendarView extends obsidian.ItemView {
         // Создаем новый календарь
         this.renderCalendar(container);
         this.dateDisplay.setText(this.getFormattedDate()); // Обновляем заголовок
-    }
+    }                                                                                               // [Обновление календаря при переходе на другие месяцы]
 
     getFormattedDate() {
         const month = MONTHS_RU[this.currentDate.getMonth()];
         const year = this.currentDate.getFullYear();
         return `${month} ${year}`;
-    }
+    }                                                                                             // [Форматирование на RU (запись в шапке календаря)]
     changeMonth(offset) {
         const prevDate = new Date(this.currentDate);
         this.currentDate.setMonth(this.currentDate.getMonth() + offset);
@@ -476,7 +473,7 @@ class CalendarView extends obsidian.ItemView {
             month === today.getMonth() &&
             year === today.getFullYear()
         );
-    }
+    }                                                                                      // [Получение обозначения текущего дня (день, месяц, год)]
 
     async openEventModal(day, month, year) {
         const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;
@@ -1042,7 +1039,7 @@ class CalendarView extends obsidian.ItemView {
 
             await this.refreshUI();
         }
-    }                                                                      // [Удаление заметки]
+    }                                                               // [Удаление заметки]
     async openEditNoteModal(day, month, year, index) {
         const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;
         const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
