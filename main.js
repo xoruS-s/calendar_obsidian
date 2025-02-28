@@ -7,6 +7,16 @@ const MONTHS_RU = [
     'Май', 'Июнь', 'Июль', 'Август',
     'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
 ];
+const HOLIDAYS_RU = [
+    "01.01", // Новый год
+    "07.01", // Рождество
+    "23.02", // День защитника Отечества
+    "08.03", // Международный женский день
+    "01.05", // Праздник весны и труда
+    "09.05", // День Победы
+    "12.06", // День России
+    "04.11", // День народного единства
+];
 
 class FullCalendarPlugin extends obsidian.Plugin {
     constructor(app, manifest) {
@@ -135,22 +145,30 @@ class CalendarView extends obsidian.ItemView {
 
         // Ячейки для дней текущего месяца
         for (let day = 1; day <= daysInMonth; day++) {
+            const currentDate = new Date(year, month, day);
+            const dayOfWeek = currentDate.getDay(); // 0 - воскресенье, 6 - суббота
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // Проверка на выходной
+
+            // Проверка на праздничный день
+            const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;
+            const isHoliday = HOLIDAYS_RU.includes(dateStr);
+
+            // Классы для стилизации
+            const dayClasses = ["calendar-day"];
+            if (this.isToday(day, month, year)) dayClasses.push("today");
+            if (isWeekend) dayClasses.push("weekend");
+            if (isHoliday) dayClasses.push("holiday");
+
             const dayEl = container.createEl("div", {
-                cls: `calendar-day ${this.isToday(day, month, year) ? "today" : ""}`,
+                // cls: `calendar-day ${this.isToday(day, month, year) ? "today" : ""}`,
+                cls: dayClasses.join(" "),
                 text: day.toString()
             });
-
-            // // Число дня
-            // dayEl.createEl("div", {
-            //     text: day.toString(),
-            //     cls: "day-number"
-            // });
 
             // Точки для заметок
             const dotsEl = dayEl.createEl("div", { cls: "note-dots" });
 
             // Проверяем, есть ли заметки для этого дня
-            const dateStr = `${day.toString().padStart(2, '0')}.${(month + 1).toString().padStart(2, '0')}.${year}`;
             const notePath = `${this.settings.storageFolder}/${dateStr}.md`;
             const file = this.app.vault.getAbstractFileByPath(notePath);
 
