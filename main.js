@@ -1272,4 +1272,5 @@ class FolderSuggestModal extends obsidian.SuggestModal {
     }
 }
 
+
 module.exports = FullCalendarPlugin;
